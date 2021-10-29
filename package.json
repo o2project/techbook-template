@@ -1,0 +1,15 @@
+{
+  "name": "vivliostyle-base",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Shota Kubota <ta2@o2p.jp>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "vivliostyle build",
+    "dev": "vivliostyle preview"
+  },
+  "devDependencies": {
+    "@vivliostyle/cli": "^4.3.0"
+  }
+}
