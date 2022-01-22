@@ -21,6 +21,6 @@
     "textlint-rule-preset-jtf-style": "^2.3.12"
   },
   "dependencies": {
-    "@o2project/vivliostyle-theme-o2project": "o2project/vivliostyle-theme-o2project"
+    "@o2project/vivliostyle-theme-o2project": "^2.0.0"
   }
 }

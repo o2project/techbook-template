@@ -98,9 +98,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@o2project/vivliostyle-theme-o2project@o2project/vivliostyle-theme-o2project":
+"@o2project/vivliostyle-theme-o2project@^2.0.0":
   version "2.0.0"
-  resolved "https://codeload.github.com/o2project/vivliostyle-theme-o2project/tar.gz/1b11576faeff626430b10bf9436b2ae6dbf76320"
+  resolved "https://registry.yarnpkg.com/@o2project/vivliostyle-theme-o2project/-/vivliostyle-theme-o2project-2.0.0.tgz#ee6907ccba54df46fa82b66878a5e9e199d28b06"
+  integrity sha512-Pq1DkJcbtG+MwB3Ha0Pu3czRdEK6HXaX8Jz6/VFV4TsJhsckkoZNPGg7lEl+sP9NQ6qfbHsm8mbSD+U5FNpDgg==
 
 "@pdf-lib/standard-fonts@^1.0.0":
   version "1.0.0"
