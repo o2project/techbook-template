@@ -8,7 +8,8 @@
   "scripts": {
     "build": "vivliostyle build",
     "dev": "vivliostyle preview",
-    "lint": "textlint ./entries/"
+    "lint": "textlint ./entries/",
+    "format": "prettier --config .prettierrc.js --write ./entries/*.md"
   },
   "devDependencies": {
     "@proofdict/textlint-rule-proofdict": "^3.1.2",
