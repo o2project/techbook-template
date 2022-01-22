@@ -98,6 +98,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@o2project/vivliostyle-theme-o2project@o2project/vivliostyle-theme-o2project":
+  version "2.0.0"
+  resolved "https://codeload.github.com/o2project/vivliostyle-theme-o2project/tar.gz/1b11576faeff626430b10bf9436b2ae6dbf76320"
+
 "@pdf-lib/standard-fonts@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@pdf-lib/standard-fonts/-/standard-fonts-1.0.0.tgz#8ba691c4421f71662ed07c9a0294b44528af2d7f"
