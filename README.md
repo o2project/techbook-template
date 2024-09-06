@@ -1,23 +1,23 @@
-# Vivliostyle Base
+# Techbook Template
 
-Vivliostyle boilerplate repository.
+Techbook boilerplate repository.
 
 ## Install dependencies
 
 ```
-yarn install
+npm install
 ```
 
 ## Build
 
 ```
-yarn build
+npm run build
 ```
 
 ## Preview
 
 ```
-yarn dev
+npm run dev
 ```
 
 ## Test
@@ -25,5 +25,5 @@ yarn dev
 Run [Textlint](https://github.com/textlint/textlint).
 
 ```
-yarn lint
+npm run lint
 ```
