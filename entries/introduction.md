@@ -1,33 +1,116 @@
-# 自分だけで進めようとしすぎるのをやめたい
+# AVA上でテストごとにsinon.useFakeTimers()を実行するとエラーが出る
 
-最近やっている仕事がスムーズに進まないと感じていて、それはなぜだろうと考えました。考えた結果、チームで進めたほうがいいものなのに自分だけで進めようとしすぎているのではと考えました。
+最近[Sinon.JS](https://sinonjs.org/)のバージョンをv14.0.0に上げたときに、エラーが出てテスト実行が失敗するようになりました。
 
-## この考えの根底にあるもの
+この記事では対処方法を書いていきます。
 
-自分だけで進めようとするのは、一緒にやる相手からバカや無能とか思われたくないとか、失敗したくないという理由が根底にあって、そういうのを考えるなら一人でやったほうが楽だと感じてしまうのがあります。
+## 事象
 
-その根底にある考えが根付いた元をたどると、過去に [HTML で DOCTYPE 宣言はなぜ必要か？](https://web.archive.org/web/20131224132322/http://inputxoutput.com/html-doctype/) という記事を書いたことがありました（記事の内容自体はもうちょっと違うように書けたかなと思う内容ですが、そこは横に置きます）。
+たとえば次のようなテストがあったとします。
 
-前述した記事を書いたとき、はてなブックマークのコメントでこの author は何も分かっていないといったようなコメントがかなり付いたり、Twitter でもツッコミが多々入ったのを見かけたりして、それらは今考えると正しい意見だったとは思います。ただその時は少なからず心が傷つきました。
+`sinon.useFakeTimers` は[ドキュメント](https://sinonjs.org/releases/latest/fake-timers/)にある通り、`setTimeout` や `clearTimeout`などを置き換える関数です。
 
-この記事を書いた後は、W3C や WHATWG の仕様書や MDN などを参照することが増えました。原文（英語）もこの時から読むようになったと思います。
+```javascript
+import test from 'ava';
+import sinon from 'sinon';
 
-## 考えによる困った状態
+test('test', (t) => {
+    const fakeTimer = sinon.useFakeTimers();
+    t.pass();
+    fakeTimer.restore();
+});
 
-ただ前述した「相手からバカや無能とか思われたくない、失敗したくない」という考えが、年を重ねるごとに広がっている気がしています。
+test('test2', (t) => {
+    const fakeTimer = sinon.useFakeTimers();
+    t.pass();
+    fakeTimer.restore();
+});
+```
 
-考えが広がっている理由としては、環境の変化や、会社に勤務し始めてからの年数的には中堅かそれ以上になってきて、より高いレベルの成果を求められるであろうと考えていることがありそうです。
+2回目の `sinon.useFakeTimers()` を実行するとき、先ほどのテストファイルで言うと `test2` を実行するときに次のようなメッセージが表示されます。
 
-あとは自分だけで進めて成果の大部分を自分のものにしたいというのもありそうです。この考えは[アレオレ詐欺](https://dic.nicovideo.jp/a/%E3%82%A2%E3%83%AC%E3%82%AA%E3%83%AC%E8%A9%90%E6%AC%BA)が嫌いという自分の特性もありそうです。
+```
+TypeError {
+  message: 'Can\'t install fake timers twice on the same global object.',
+}
+```
 
-ただその考えが邪魔をして、自分が困っているという状態を上手くさらけ出せなかったり、ある程度自分の中で納得した状態にならないと事を進められない状態になったりしています。
+## 原因
 
-またその納得した状態になったとしてもどこか詰めが甘い部分があって、深い議論になると答えに窮することがあります。
+書き換えられたグローバルオブジェクトを戻すために `sinon.useFakeTimers` と `fakeTimer.restore()` を対になる形で実行しないといけません。
 
-## 理想状態
+うっかり `fakeTimer.restore()` を実行しないまま `sinon.useFakeTimers`  を実行すると、元の日時に復元することが難しくなります。
 
-本当は分からないところは分からないと素直に素早く誰かに言って、一緒に考えて答えを出せるように巻き込めるようになるのが理想とは考えています。
+```javascript
+// サンプル
+const sinon = require("sinon@12.0.0")
 
-「早く行きたければ一人で進め、遠くまで行きたければ皆で進め」のことわざの通り、いま関わっているものは個人よりチームでやったほうが、より高い目標を達成できそうという考えはあります。
+console.log("Original time: " + new Date().getTime()); // "Original time: 1653007080412"
+let fakeTimer = sinon.useFakeTimers(Date.parse("2014-06-05T12:07:07.662Z"));
+fakeTimer = sinon.useFakeTimers(Date.parse("2018-04-11T14:08:00Z"));
+fakeTimer.restore();
+console.log("Restored time: " + new Date().getTime()); // "Restored time: 1401970027662"
+```
 
-なので積極的に意見を求めたり、より多くの人を巻き込んでいったり、自分が知っているものを他の人に委譲したりということをよりやっていくことで、目的達成の近道の 1 つを作っていくことをしたいです。
+今回のサンプルコードの場合はまだ復元できると思いますが、これがより回数を重ねて `sinon.useFakeTimers` を実行してしまうとより復元が難しくなります。
+
+この問題が、[Impossible to restore fake timers in certain situations. · Issue #2449 · sinonjs/sinon](https://github.com/sinonjs/sinon/issues/2449)で報告されて、対応として `@sinonjs/fake-timers` 側で[Prohibit faking of faked timers by cjbarth · Pull Request #426 · sinonjs/fake-timers](https://github.com/sinonjs/fake-timers/pull/426)というPull Requestがマージされました。
+
+Pull RequestのSolutionに「If an attempt is make to fake a timer that is already faked, an exception will be thrown.」と書いてある通り、timerがすでにfakeだった場合に再度 `sinon.useFakeTimers` を実行した場合に例外が投げられるという変更がされました。
+
+この変更により、複数のテストで `sinon.useFakeTimers` と `fakeTimer.restore` を実行していた場合に、AVA上でテストが並列で実行されることもあって  `fakeTimer.restore` が実行される前に `sinon.useFakeTimers` が実行される場合が出てきました。
+
+その結果として「Can't install fake timers twice on the same global object.」というエラーが出力されるようになりました。
+
+## 解決策
+
+解決方法は2つあります。
+
+まず1つは、テストコード側で並列実行をやめて直列実行にすることです。具体的には次の通り書くとテストが成功します。
+
+```javascript
+import test from 'ava';
+import sinon from 'sinon';
+
+test.serial('test', (t) => {
+    const fakeTimer = sinon.useFakeTimers();
+    t.pass();
+    fakeTimer.restore();
+});
+
+test.serial('test2', (t) => {
+    const fakeTimer = sinon.useFakeTimers();
+    t.pass();
+    fakeTimer.restore();
+});
+```
+
+または `test.before` や `test.after` といったテストファイル内の最初と最後のテスト前後で実行されるフックを使って、fakeTimerを使うのも良いです。
+
+```javascript
+import test from 'ava';
+import sinon from 'sinon';
+
+let fakeTimer = null;
+
+test.before(() => {
+    fakeTimer = sinon.useFakeTimers();
+});
+
+test.after(() => {
+	if (!fakeTimer) {
+		return;
+	}
+    fakeTimer.restore();
+});
+
+test('test', (t) => {
+    t.pass();
+});
+
+test('test2', (t) => {
+    t.pass();
+});
+```
+
+AVAのように並列実行がデフォルトのテストフレームワークだと同じ問題が起きそうですが、他のJestやVitestなどはどうしているのか気になります。
