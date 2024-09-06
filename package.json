@@ -11,7 +11,7 @@
     "build": "vivliostyle build",
     "dev": "vivliostyle preview",
     "format": "prettier --write .",
-    "lint": "textlint ./entries/"
+    "lint": "textlint ./entries/*.md"
   },
   "devDependencies": {
     "@kubosho/configs": "^3.12.0",
