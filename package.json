@@ -4,6 +4,9 @@
   "author": "O2 Project <dev@o2p.jp>",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": "20.17.0"
+  },
   "scripts": {
     "build": "vivliostyle build",
     "dev": "vivliostyle preview",
