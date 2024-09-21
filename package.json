@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "vivliostyle build",
+    "build:press": "PRESS_ONLY=true vivliostyle build --preflight press-ready",
     "dev": "vivliostyle preview",
     "format": "prettier --write .",
     "lint": "textlint ./entries/*.md"
