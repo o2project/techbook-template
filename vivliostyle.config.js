@@ -1,16 +1,14 @@
 const TITLE = 'Vivliostyle Base';
 
+const pdfOutputDir = process.env.PRESS_ONLY === 'true' ? './dist/press' : './dist/pdf';
 const pdfConfig = {
-  path: `./dist/pdf/${TITLE}.pdf`,
+  path: `${pdfOutputDir}/${TITLE}.pdf`,
   format: 'pdf',
 };
 const webpubConfig = {
   path: './dist/webpub/',
   format: 'webpub',
 };
-
-const output =
-  process.env.PRESS_ONLY === 'true' ? [{ ...pdfConfig, path: `./dist/press/${TITLE}.pdf` }] : [pdfConfig, webpubConfig];
 
 module.exports = {
   title: TITLE,
@@ -19,7 +17,7 @@ module.exports = {
   size: 'JIS-B5',
   theme: '@o2project/vivliostyle-theme-o2project',
   entry: ['./entries/introduction.md'],
-  output,
+  output: [pdfConfig, webpubConfig],
   workspaceDir: '.temp',
   toc: {
     title: '目次',
